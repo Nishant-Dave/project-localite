@@ -184,3 +184,5 @@ CHANNEL_LAYERS = {
 # LOGOUT_REDIRECT_URL = "/accounts/login/"
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+# GitHub token: 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
