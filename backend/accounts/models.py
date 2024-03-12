@@ -119,8 +119,8 @@ class Post(models.Model):
 
 
 class UserProfile(models.Model):
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
+    first_name = models.CharField(max_length=100, default='')
+    last_name = models.CharField(max_length=100, default='')
     email_id = models.EmailField(default='email')
     city = models.CharField(max_length=100)
     bio = models.TextField(blank=True)

@@ -98,8 +98,8 @@ class Migration(migrations.Migration):
             name='UserProfile',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('first_name', models.CharField(max_length=100)),
-                ('last_name', models.CharField(max_length=100)),
+                ('first_name', models.CharField(max_length=100, default='')),
+                ('last_name', models.CharField(max_length=100, default='')),
                 ('email_id', models.EmailField(default='email', max_length=254)),
                 ('city', models.CharField(max_length=100)),
                 ('bio', models.TextField(blank=True)),

@@ -6,7 +6,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ('name', 'email_id', 'password')
+        fields = ('id', 'name', 'email_id', 'password')
 
     def create(self, validated_data):
         return CustomUser.objects.create_user(
@@ -28,7 +28,18 @@ class PostSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ['first_name', 'last_name','bio', 'city', 'user', 'email_id']
+        fields = ['first_name', 'last_name','bio', 'city', 'email_id']
+        extra_kwargs = {
+            'first_name': {'required': False},
+            'last_name': {'required': False}
+        }
+
+    def validate(self, data):
+        if not data.get('first_name'):
+            data.pop('first_name', None)
+        if not data.get('last_name'):
+            data.pop('last_name', None)
+        return data
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -38,6 +49,13 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class FriendStatusSerializer(serializers.ModelSerializer):
+    
+    # def get_sender_name(self, obj):
+    #     return obj.sender.name
+    sender_name = serializers.CharField(source='sender.name', read_only=True)
+
+
     class Meta:
         model = FriendStatus
-        fields = ['sender', 'receiver', 'status']
+        fields = ['sender', 'receiver', 'status', 'created_at', 'sender_name']
+

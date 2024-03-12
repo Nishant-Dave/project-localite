@@ -15,11 +15,11 @@ export default function LoginForm() {
 
             if (response.status === 200) {
                 
-                const { user_id, name, tokens } = response.data;
-                localStorage.setItem('userId', user_id);
+                const { name, tokens } = response.data;
                 localStorage.setItem('userName', name); // Store the user's name in local storage
+                localStorage.setItem('email_id', email_id)
                 localStorage.setItem('token', tokens.access);
-                
+                alert(name + " is logged in.")
 
               } else {
                 console.error('Invalid credentials');

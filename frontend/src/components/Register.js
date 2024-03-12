@@ -32,7 +32,7 @@ export default function Register() {
         <>
             <form>
                 <div className="form-group">
-                    <label htmlFor="exampleInputUserName">User name</label>
+                    <label htmlFor="exampleInputUserName">Full name</label>
                     <input
                         type="text"
                         className="form-control"

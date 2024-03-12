@@ -1,52 +1,42 @@
+
 import React, { useState } from "react";
 import axios from 'axios';
 import LogoutButton from './Logout';
 
 export default function Navbar() {
-    const [searchQuery, setSearchQuery] = useState("");
-    const [searchResults, setSearchResults] = useState([]);
-    const token = localStorage.getItem('token');
+        const [searchQuery, setSearchQuery] = useState("");
+        const [searchResults, setSearchResults] = useState([]);
+    
+        const handleSearchChange = async (event) => {
+            const { value } = event.target;
+            setSearchQuery(value);
+    
+            try {
+                const response = await axios.get(`http://127.0.0.1:8000/api/search?query=${value}`);
+                
+                setSearchResults(response.data);
+                
+            } catch (error) {
+                console.error(error);
+                
+            }
+        };
 
+        const sendFriendRequest = async (userId) => {
+            try {
+                console.log("userID is: " + userId)
+                await axios.post(`http://127.0.0.1:8000/api/send-request/${userId}/`);
+                alert('Friend request sent');
+            } catch (error) {
+                console.error(error);
 
-    const handleSearchChange = async (event) => {
-        const { value } = event.target;
-
-        setSearchQuery(value);
-
-        try {
-            const response = await axios.get(`http://127.0.0.1:8000/api/search?query=${value}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-
-            });
-            setSearchResults(response.data);
-
-        } catch (error) {
-            console.error(error);
-
-        }
-    };
-
-    const sendFriendRequest = async (userId) => {
-        try {
-            console.log("userID is: " + userId);
-            // Send friend request with authentication token
-            await axios.post(`http://127.0.0.1:8000/api/send-request/${userId}/`, {}, {
-                headers: {
-                    // Authorization: `Bearer ${localStorage.getItem('token')}`, // Include authentication token
-                    Authorization: `Bearer ${token}`,
-
-                },
-            });
-            alert('Friend request sent');
-        } catch (error) {
-            console.error(error);
-            alert('Failed to send friend request');
-        }
-    };
+                alert('Failed to send friend request');
+            }
+        };
 
     return (
+
+
         <nav className="navbar navbar-expand-lg bg-body-tertiary">
             <div className="container-fluid">
                 <a className="navbar-brand" href="/">localite</a>
@@ -70,7 +60,10 @@ export default function Navbar() {
                         <li className="nav-item">
                             <a className="nav-link active" aria-current="page" href="/user-profile">My Profile</a>
                         </li>
+
+
                     </ul>
+                  
                     <div className="d-flex">
                         <form className="form-inline">
                             <input className="form-control mr-sm-2" type="search" placeholder="Search friend" aria-label="Search" value={searchQuery} onChange={handleSearchChange} />
@@ -88,8 +81,22 @@ export default function Navbar() {
                         )}
                         <LogoutButton />
                     </div>
+
+
+
+
+                    {/* <div className="d-flex">
+                        <form className="form-inline" onSubmit={handleSearchSubmit}>
+                            <input className="form-control mr-sm-2" type="search" placeholder="Search friend" aria-label="Search" value={searchQuery} onChange={handleSearchChange} />
+                            <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                        </form>
+                        // {/* <LogoutButton /> */}
+                    {/* </div> */}
+
+
+
                 </div>
             </div>
         </nav>
-    );
+    )
 }

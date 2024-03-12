@@ -73,6 +73,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
+
+
 
 ]
 
@@ -184,5 +187,8 @@ CHANNEL_LAYERS = {
 # LOGOUT_REDIRECT_URL = "/accounts/login/"
 
 CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ALLOWED_ORIGINS = [
+#     'http://localhost:3000',
+# ]
 
 # GitHub token: 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
