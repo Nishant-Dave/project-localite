@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import axios from "axios";
 
 
-export default function UpdateProfile({ userName }) {
+export default function UpdateProfile({ userName, Email }) {
     const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
+    // const [lastName, setLastName] = useState('');
     const [city, setCity] = useState('');
     const [bio, setBio] = useState('');
 
@@ -19,7 +19,7 @@ export default function UpdateProfile({ userName }) {
 
             const profileData = {
                 first_name: firstName,
-                last_name: lastName,
+                email: Email,
                 city: city,
                 bio: bio
             };
@@ -57,21 +57,22 @@ export default function UpdateProfile({ userName }) {
                     <div className="col-md-9 personal-info">
 
                         <div className="form-group">
-                            <label className="col-lg-3 control-label">First name:</label>
+                            <label className="col-lg-3 control-label">Full name:</label>
                             <div className="col-lg-8">
                                 <input className="form-control" type="text"
-                                    value={firstName}
+                                    placeholder={userName}
                                     onChange={(e) => setFirstName(e.target.value)} />
                             </div>
                         </div>
+{console.log("email id is: " + Email)}
                         <div className="form-group">
-                            <label className="col-lg-3 control-label">Last name:</label>
+                            <label className="col-lg-3 control-label">Email id:</label>
                             <div className="col-lg-8">
-                                <input className="form-control" type="text"
-                                    value={lastName}
-                                    onChange={(e) => setLastName(e.target.value)} />
+                                <input className="form-control" type="email"
+                                    value={Email} />
                             </div>
                         </div>
+                        
                         <div className="form-group">
                             <label className="col-lg-3 control-label">City:</label>
                             <div className="form-group col-lg-8">

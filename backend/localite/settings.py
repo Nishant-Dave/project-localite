@@ -52,6 +52,7 @@ INSTALLED_APPS = [
 ]
 
 ASGI_APPLICATION = 'localite.asgi.application'
+# ASGI_APPLICATION = 'localite.routing.application'
 
 
 SIMPLE_JWT = {

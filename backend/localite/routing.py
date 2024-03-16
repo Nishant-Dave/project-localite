@@ -1,14 +1,15 @@
-from django.urls import path , include,re_path
-from .users import ChatUser
-
-websocket_urlpatterns = [
-	path("" , ChatUser.as_asgi()) , 
-]
+# localite/routing.py
 
 
+from channels.routing import ProtocolTypeRouter, URLRouter
+from channels.auth import AuthMiddlewareStack
+from django.urls import path
+from accounts.routing import websocket_urlpatterns
 
-# websocket_urlpatterns = [
-# 	path("<room_slug>" , ChatUser.as_asgi()) ,
-#     re_path(r'^ws/(?P<room_slug>[^/]+)/$', ChatUser.as_asgi()),
-# ]
-
+application = ProtocolTypeRouter({
+    'websocket': AuthMiddlewareStack(
+        URLRouter(
+            websocket_urlpatterns
+        )
+    ),
+})

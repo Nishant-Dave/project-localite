@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function LoginForm() {
     const [email_id, setEmail_id] = useState('');
     const [password, setPassword] = useState('');
+    // const navigate = useNavigate();
+
 
     const handleLogin = async () => {
         try {
@@ -20,6 +22,10 @@ export default function LoginForm() {
                 localStorage.setItem('email_id', email_id)
                 localStorage.setItem('token', tokens.access);
                 alert(name + " is logged in.")
+
+                // navigate('/Home');
+                window.location.href = '/home'; 
+
 
               } else {
                 console.error('Invalid credentials');

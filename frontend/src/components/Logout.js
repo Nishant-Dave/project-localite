@@ -8,7 +8,7 @@ const LogoutButton = () => {
   };
 
   return (
-    <button onClick={handleLogout}>Logout</button>
+    <button className="text-primary" onClick={handleLogout}>Logout</button>
   );
 };
 

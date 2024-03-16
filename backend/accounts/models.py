@@ -162,30 +162,44 @@ class FriendStatus(models.Model):
         db_table = 'friend_status'
 
 
-class Room(models.Model):
-    name = models.CharField(max_length=20)
-    slug = models.SlugField(max_length=100)
+# --------------------------- CHAT MODEL ---------------------------
 
-
-    def __str__(self):
-        return "Room : "+ self.name + " | Id : " + self.slug
-    
-    class Meta:
-        db_table = 'chat_room'
-
-    
 
 class Message(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='sent_messages')
+    recipient = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='received_messages')
     content = models.TextField()
-    room = models.ForeignKey(Room, on_delete=models.CASCADE)
-    created_on = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
 
-
-    def __str__(self):
-        return "Message is :- "+ self.content
-    
     class Meta:
-        db_table = 'message'
+        db_table = 'chat_table'
+
+
+# class Room(models.Model):
+#     name = models.CharField(max_length=20)
+#     slug = models.SlugField(max_length=100)
+
+
+#     def __str__(self):
+#         return "Room : "+ self.name + " | Id : " + self.slug
+    
+#     class Meta:
+#         db_table = 'chat_room'
+
+    
+
+# class Message(models.Model):
+#     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+#     content = models.TextField()
+#     room = models.ForeignKey(Room, on_delete=models.CASCADE)
+#     created_on = models.DateTimeField(auto_now_add=True)
+
+
+#     def __str__(self):
+#         return "Message is :- "+ self.content
+    
+#     class Meta:
+#         db_table = 'message'
 
 

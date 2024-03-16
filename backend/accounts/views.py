@@ -1,14 +1,18 @@
+from django.db.models import Q
+
 from rest_framework import status, generics
 from django.http import HttpResponse, JsonResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from accounts.serializers import UserSerializer, PostSerializer, UserProfileSerializer, CommentSerializer, FriendStatusSerializer
+from accounts import models
 from .models import CustomUser, Post, UserProfile, Comment, FriendStatus, Message
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import get_object_or_404, render, redirect
-from django.db.models import Q
 
+# from django.views.decorators.csrf import csrf_exempt
+# from django.contrib.auth.decorators import login_required
 
 # # ----------------------- REGISTRATION VIEW ----------------------
 
@@ -108,27 +112,33 @@ def search_users(request):
 
 # -------------------------------- USER POST VIEW -------------------------------
 
-
 @api_view(['POST'])
+# @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def post_view(request):
-    if request.method == 'POST':
-        # Extract 'content' from request data
-        content = request.data.get('content')
+def create_post(request):
+    serializer = PostSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save(user=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # Set 'user' to the id of the logged-in user
-        user_email = request.user.email_id
+
+# @api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+# def post_view(request):
+#     if request.method == 'POST':
+#         content = request.data.get('content')
+#         user_id = request.data.get('user_id')
+#         # user_email = request.user.email_id
         
-        # Create dictionary with 'content' and 'user'
-        post_data = {'content': content, 'user': user_email}
+#         post_data = {'content': content, 'user': user_id}
 
-        # Create serializer instance with the post data
-        serializer = PostSerializer(data=post_data)
+#         serializer = PostSerializer(data=post_data)
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -220,7 +230,7 @@ def send_request(request, receiver_id):
     if receiver == request.user:
         return Response({'error': 'You cannot send a friend request to yourself'}, status=status.HTTP_400_BAD_REQUEST)
     
-    if FriendStatus.objects.filter(sender=request.user, receiver=receiver).exists():
+    if FriendStatus.objects.filter(sender=request.user, receiver=receiver).exists() or FriendStatus.objects.filter(sender=receiver, receiver=request.user).exists():
         return Response({'error': 'Friend request already sent'}, status=status.HTTP_400_BAD_REQUEST)
     
     friend_request = FriendStatus.objects.create(sender=request.user, receiver=receiver, status='Pending')
@@ -271,23 +281,68 @@ def friend_requests(request):
 
 
 # ------------------------------- FRIEND LIST ------------------------------
+# from django.db.models import Q
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def friend_list(request):
-    # Get all friends with the 'friends' status for the authenticated user
-    friends = FriendStatus.objects.filter(sender=request.user, status='F') | FriendStatus.objects.filter(receiver=request.user, status='F')
-    friend_serializer = FriendStatusSerializer(friends, many=True)
-    return Response(friend_serializer.data)
+    try:
+        # Get all friends with the 'friends' status for the authenticated user
+        user = request.user
+        friends = FriendStatus.objects.filter(
+            (Q(sender=user) | Q(receiver=user)) & Q(status='Friends')
+        )
+        friend_serializer = FriendStatusSerializer(friends, many=True)
+        return Response(friend_serializer.data)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+# @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+# def friend_list(request):
+#     # Get all friends with the 'friends' status for the authenticated user
+#     friends = FriendStatus.objects.filter(sender=request.user, status='F') | FriendStatus.objects.filter(receiver=request.user, status='F')
+#     friend_serializer = FriendStatusSerializer(friends, many=True)
+#     return Response(friend_serializer.data)
 
 
 # ------------------------------- CHAT VIEWS -------------------------------
 
-def chat_view(request, *args, **kwargs):
-    if not request.user.is_authenticated:
-        return redirect("login")
-    context = {}
-    return render(request, "chat/chatPage.html", context)
+# @csrf_exempt
+# @login_required
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+
+def send_message(request):
+    if request.method == 'POST':
+        sender = request.user
+        recipient_id = request.POST.get('recipient_id')
+        content = request.POST.get('content')
+
+        if not recipient_id or not content:
+            return JsonResponse({'error': 'Recipient ID and content are required.'}, status=400)
+
+        recipient = CustomUser.objects.get(id=recipient_id)
+        message = Message.objects.create(sender=sender, recipient=recipient, content=content)
+
+        return JsonResponse({'message': 'Message sent successfully.'})
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_messages(request):
+    if request.method == 'GET':
+        messages = Message.objects.filter(recipient=request.user, is_read=False)
+        messages_data = [{'sender': message.sender.username, 'content': message.content} for message in messages]
+
+        # Mark messages as read
+        messages.update(is_read=True)
+
+        return JsonResponse({'messages': messages_data})
+
+
 
 
 
