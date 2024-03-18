@@ -1,50 +1,58 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const Chat = ({ friend }) => {
+const Chat = ({ recipientId }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
 
   useEffect(() => {
-    const fetchMessages = async () => {
-      try {
-        // Fetch chat messages with friend from backend
-        const response = await axios.get(`http://your-backend-api/chat/${friend.id}`);
-        setMessages(response.data);
-      } catch (error) {
-        console.error('Error fetching messages:', error);
-      }
-    };
-
     fetchMessages();
-  }, [friend]);
+  }, []);
+
+  const fetchMessages = async () => {
+    try {
+      const response = await axios.get('http://127.0.0.1:8000/api/get_message/');
+      setMessages(response.data.messages);
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    }
+  };
 
   const sendMessage = async () => {
     try {
-      // Send message to backend
-      await axios.post('http://your-backend-api/chat/send', {
-        recipientId: friend.id,
-        content: newMessage,
+      await axios.post('http://127.0.0.1:8000/api/send_message/', {
+        recipient: recipientId,
+        content: newMessage
       });
-      // Clear the input field
       setNewMessage('');
-      // Refresh messages
-      // fetchMessages();
+      fetchMessages();
     } catch (error) {
       console.error('Error sending message:', error);
     }
   };
 
+  const handleMessageChange = (event) => {
+    setNewMessage(event.target.value);
+  };
+
   return (
-    <div>
-      <h2>Chat with {friend.username}</h2>
-      <ul>
-        {messages.map((message) => (
-          <li key={message.id}>{message.content}</li>
+    <div className="chat-container">
+      <div className="messages">
+        {messages.map((message, index) => (
+          <div key={index} className="message">
+            <strong>{message.sender}</strong>: {message.content}
+          </div>
         ))}
-      </ul>
-      <textarea value={newMessage} onChange={(e) => setNewMessage(e.target.value)} />
-      <button onClick={sendMessage}>Send</button>
+      </div>
+      <div className="message-input">
+        <textarea
+          value={newMessage}
+          onChange={handleMessageChange}
+          placeholder="Type message..."
+          rows={3}
+        />
+        <button onClick={sendMessage}>Send</button>
+      </div>
     </div>
   );
 };
@@ -53,43 +61,56 @@ export default Chat;
 
 
 
-
 // import React, { useState, useEffect } from 'react';
-// import WebSocket from 'react-websocket';
+// import axios from 'axios';
 
-// export default function Chat ()  {
+// const Chat = ({ friend }) => {
 //   const [messages, setMessages] = useState([]);
-//   const [inputMessage, setInputMessage] = useState('');
+//   const [newMessage, setNewMessage] = useState('');
 
-//   const handleData = (data) => {
-//     const message = JSON.parse(data);
-//     setMessages([...messages, message]);
-//   };
+//   useEffect(() => {
+//     const fetchMessages = async () => {
+//       try {
+//         // Fetch chat messages with friend from backend
+//         const response = await axios.get(`http://your-backend-api/chat/${friend.id}`);
+//         setMessages(response.data);
+//       } catch (error) {
+//         console.error('Error fetching messages:', error);
+//       }
+//     };
 
-//   const handleSendMessage = () => {
-//     // Send the message to the server
-//     // You can use a library like axios or the native WebSocket API
+//     fetchMessages();
+//   }, [friend]);
+
+//   const sendMessage = async () => {
+//     try {
+//       // Send message to backend
+//       await axios.post('http://your-backend-api/chat/send', {
+//         recipientId: friend.id,
+//         content: newMessage,
+//       });
+//       // Clear the input field
+//       setNewMessage('');
+//       // Refresh messages
+//       // fetchMessages();
+//     } catch (error) {
+//       console.error('Error sending message:', error);
+//     }
 //   };
 
 //   return (
 //     <div>
-//       <div>
-//         {messages.map((msg, index) => (
-//           <div key={index}>{msg.message}</div>
+//       <h2>Chat with {friend.username}</h2>
+//       <ul>
+//         {messages.map((message) => (
+//           <li key={message.id}>{message.content}</li>
 //         ))}
-//       </div>
-//       <input
-//         type="text"
-//         value={inputMessage}
-//         onChange={(e) => setInputMessage(e.target.value)}
-//       />
-//       <button onClick={handleSendMessage}>Send Message</button>
-
-//       <WebSocket
-//         url="ws://your-backend-url/ws/some_path/"
-//         onMessage={handleData}
-//       />
+//       </ul>
+//       <textarea value={newMessage} onChange={(e) => setNewMessage(e.target.value)} />
+//       <button onClick={sendMessage}>Send</button>
 //     </div>
 //   );
 // };
+
+// export default Chat;
 

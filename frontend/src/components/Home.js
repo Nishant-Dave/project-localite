@@ -22,7 +22,7 @@ export default function Home( {userName} ) {
 
                     <ul className="nav nav-pills">
                         <li className="nav-item"><a href="home" className="nav-link active" aria-current="page">Home</a></li>
-                        <li className="nav-item"><a href="/" className="nav-link">Features</a></li>
+                        <li className="nav-item"><a href="chat" className="nav-link">Chat</a></li>
                         <li className="nav-item"><a href="/" className="nav-link">Pricing</a></li>
                         <li className="nav-item"><a href="/" className="nav-link">FAQs</a></li>
                         
@@ -35,9 +35,9 @@ export default function Home( {userName} ) {
             {/* -------------------------- SIDEBAR ------------------------ */}
 
 
-            <div class="container" style={{ paddingTop: "90px" }}>
-                <div class="row">
-                    <div class="col-3">
+            <div className="container" style={{ paddingTop: "90px" }}>
+                <div className="row">
+                    <div className="col-3">
                         <div className="d-flex flex-column flex-shrink-0 p-3 bg-light" style={{ width: "300px", height: "80%", position: "fixed" }}>
                             <a href="/" className="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
                                 <svg className="bi me-2" width="40" height="32"><use xlinkHref="#bootstrap" /></svg>
@@ -82,7 +82,7 @@ export default function Home( {userName} ) {
 {/* -------------------------------- MAIN CONTENT -------------------------------- */}
 
 
-                    <div class="col-9" style={{ paddingTop: "50px" }}>
+                    <div className="col-9" style={{ paddingTop: "50px" }}>
                         <div>
                             <Post />
                          

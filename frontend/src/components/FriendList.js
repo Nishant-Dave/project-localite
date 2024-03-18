@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+// import Chat from './Chat';
+
 export default function FriendList() {
   const [friends, setFriends] = useState([]);
   const [loggedInUserName, setLoggedInUserName] = useState('');
+
 
   const token = localStorage.getItem('token');
 
@@ -25,37 +28,34 @@ export default function FriendList() {
         }
       });
       setFriends(response.data);
-      console.log("Friend list fetched.");
+      // console.log("Friend list fetched.");
     } catch (error) {
       console.error('Error fetching friend list:', error);
     }
   };
 
 
+  return (
+    <div>
+      <h5 className='text-primary'>Friend List</h5>
+      <ul>
+        {friends.map(friend => (
 
-const handleChat = (friendId) => {
-  console.log(`Chatting with friend ${friendId}`);
-  //  chat logic here
-};
-
-return (
-  <div>
-    <h5 className='text-primary'>Friend List</h5>
-    <ul>
-      {friends.map(friend => (
-
-        friend.sender_name !== loggedInUserName && (
+          friend.sender_name !== loggedInUserName && (
 
 
-          <li key={friend.id}>
-            {friend.sender_name}
-            <button onClick={() => handleChat(friend.id)}>Chat</button>
-          </li>
-        )
-      ))}
-    </ul>
-  </div>
-);
+            <li key={friend.id}>
+              {friend.sender_name}
+              
+            </li>
+          )
+        ))}
+      </ul>
+
+
+
+    </div>
+  );
 }
 
 

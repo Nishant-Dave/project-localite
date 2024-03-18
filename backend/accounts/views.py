@@ -5,7 +5,7 @@ from django.http import HttpResponse, JsonResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from accounts.serializers import UserSerializer, PostSerializer, UserProfileSerializer, CommentSerializer, FriendStatusSerializer
+from accounts.serializers import UserSerializer, PostSerializer, UserProfileSerializer, CommentSerializer, FriendStatusSerializer, MessageSerializer
 from accounts import models
 from .models import CustomUser, Post, UserProfile, Comment, FriendStatus, Message
 from django.contrib.auth import authenticate, login, logout
@@ -38,6 +38,7 @@ def registration_view(request):
 @permission_classes([AllowAny])
 def login_view(request):
     if request.method == 'POST':
+
         email = request.data.get('email_id')
         password = request.data.get('password')
 
@@ -45,7 +46,7 @@ def login_view(request):
                
         if user:
             
-            user_name = user.name
+            user_id = user.id
                         
             user_email = user.email_id
             
@@ -53,7 +54,7 @@ def login_view(request):
             
             user_name = user.name
 
-            return Response({'name': user_name, 'user_email': user_email, 'tokens': tokens}, status=status.HTTP_200_OK)
+            return Response({'user_id':user_id, 'name': user_name, 'user_email': user_email, 'tokens': tokens}, status=status.HTTP_200_OK)
         else:
             return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
         
@@ -121,6 +122,15 @@ def create_post(request):
         serializer.save(user=request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def post_list(request, user_id):
+    posts = Post.objects.filter(user=user_id)
+    serializer = PostSerializer(posts, many=True)
+    return Response({'posts': serializer.data})
+
 
 
 # @api_view(['POST'])
@@ -319,20 +329,22 @@ def friend_list(request):
 def send_message(request):
     if request.method == 'POST':
         sender = request.user
-        recipient_id = request.POST.get('recipient_id')
-        content = request.POST.get('content')
+        recipient_id = request.data.get('recipient')
+        content = request.data.get('content')
 
         if not recipient_id or not content:
             return JsonResponse({'error': 'Recipient ID and content are required.'}, status=400)
 
-        recipient = CustomUser.objects.get(id=recipient_id)
+        recipient = get_object_or_404(CustomUser, id=recipient_id)
+        # recipient = CustomUser.objects.get(id=recipient_id)
         message = Message.objects.create(sender=sender, recipient=recipient, content=content)
 
+        serializer = MessageSerializer(message)
         return JsonResponse({'message': 'Message sent successfully.'})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_messages(request):
+def get_message(request):
     if request.method == 'GET':
         messages = Message.objects.filter(recipient=request.user, is_read=False)
         messages_data = [{'sender': message.sender.username, 'content': message.content} for message in messages]

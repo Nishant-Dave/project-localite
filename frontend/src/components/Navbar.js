@@ -74,6 +74,9 @@ export default function Navbar() {
                         <li className="nav-item">
                             <a className="nav-link active" aria-current="page" href="/user-profile">My Profile</a>
                         </li>
+                        <li className="nav-item">
+                            <a className="nav-link active" aria-current="page" href="/chat">Chat</a>
+                        </li>
                     </ul>
                     <div className="d-flex">
                         <form className="form-inline">

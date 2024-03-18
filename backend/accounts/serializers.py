@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from accounts.models import CustomUser, Post, UserProfile, Comment, FriendStatus
+from accounts.models import CustomUser, Post, UserProfile, Comment, FriendStatus, Message
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -21,7 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        fields = ['content', 'user']
+        fields = ['content', 'user', 'created_at']
         read_only_fields = ['user']
 
 
@@ -61,3 +61,8 @@ class FriendStatusSerializer(serializers.ModelSerializer):
         model = FriendStatus
         fields = ['sender', 'receiver', 'status', 'created_at', 'sender_name']
 
+
+class MessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = ['id', 'sender', 'recipient', 'content', 'timestamp', 'is_read']

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function LoginForm() {
+    const [user_id, setUser_id] = useState('');
     const [email_id, setEmail_id] = useState('');
     const [password, setPassword] = useState('');
     // const navigate = useNavigate();
@@ -11,15 +12,19 @@ export default function LoginForm() {
     const handleLogin = async () => {
         try {
             const response = await axios.post('http://127.0.0.1:8000/api/login/', {
+                user_id,    
                 email_id,
                 password
             });
 
             if (response.status === 200) {
                 
-                const { name, tokens } = response.data;
-                localStorage.setItem('userName', name); // Store the user's name in local storage
-                localStorage.setItem('email_id', email_id)
+                const { user_id, name, tokens } = response.data;
+
+                // Store the user's data in local storage
+                localStorage.setItem('userName', name); 
+                localStorage.setItem('user_id',user_id);
+                localStorage.setItem('email_id', email_id);
                 localStorage.setItem('token', tokens.access);
                 alert(name + " is logged in.")
 

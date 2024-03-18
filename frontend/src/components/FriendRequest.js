@@ -19,6 +19,7 @@ export default function FriendRequests() {
         }
       });
       setRequests(response.data);
+
       
     } catch (error) {
       console.error('Error fetching friend requests:', error);
@@ -27,19 +28,23 @@ export default function FriendRequests() {
 
   const handleAcceptRequest = async (requestId) => {
     try {
+      console.log(requestId)
       await axios.post(`http://127.0.0.1:8000/api/accept-request/${requestId}/`, null, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
-      // After accepting the request, remove it from the requests array
-      fetchFriendRequests();
-      // setRequests(requests.filter(request => request.id !== requestId));
+      console.log("Friend request accepted successfully.");
+      // updated friend requests
+      const updatedRequests = await fetchFriendRequests();
+      console.log("Updated friend requests:", updatedRequests);
+      
     } catch (error) {
       console.error('Error accepting friend request:', error);
+      
     }
   };
-
+  
   const handleRejectRequest = async (requestId) => {
     try {
       await axios.post(`http://127.0.0.1:8000/api/reject-request/${requestId}/`, null, {
@@ -47,14 +52,14 @@ export default function FriendRequests() {
           Authorization: `Bearer ${token}`
         }
       });
-      // After rejecting the request, remove it from the requests array
-      fetchFriendRequests();
-      // setRequests(requests.filter(request => request.id !== requestId));
+      console.log("Friend request rejected successfully.");
+      //  updated friend requests
+      const updatedRequests = await fetchFriendRequests();
+      console.log("Updated friend requests:", updatedRequests);
     } catch (error) {
       console.error('Error rejecting friend request:', error);
     }
   };
-
   return (
     <div>
       <h5 className='text-primary'>Friend Requests</h5>
@@ -62,7 +67,9 @@ export default function FriendRequests() {
         {requests.map(request => (
           <li key={request.id}>
             {request.sender_name}
-            <button onClick={() => handleAcceptRequest(request.id)}>Accept</button>
+            <button onClick={() => {
+              console.log("requestID is: " + request.id);
+              handleAcceptRequest(request.id)}}>Accept</button>
             <button onClick={() => handleRejectRequest(request.id)}>Reject</button>
           </li>
         ))}
