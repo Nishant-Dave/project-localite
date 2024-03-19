@@ -11,7 +11,6 @@ const PostList = () => {
 
     const fetchUserPosts = async () => {
         try {
-            console.log(userId);
             const token = localStorage.getItem('token'); // Get token from localStorage
             if (!token) {
                 throw new Error('User is not authenticated');

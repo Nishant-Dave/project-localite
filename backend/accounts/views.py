@@ -283,11 +283,12 @@ def reject_request(request, sender_id):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
+
 def friend_requests(request):
-    # Get all friend requests received by the authenticated user
-    friend_requests = FriendStatus.objects.filter(receiver=request.user)
+    friend_requests = FriendStatus.objects.filter(receiver=request.user, status='Pending')
     serializer = FriendStatusSerializer(friend_requests, many=True)
     return Response(serializer.data)
+
 
 
 # ------------------------------- FRIEND LIST ------------------------------
@@ -298,7 +299,7 @@ def friend_requests(request):
 @permission_classes([IsAuthenticated])
 def friend_list(request):
     try:
-        # Get all friends with the 'friends' status for the authenticated user
+        # to get all friends with the 'friends' status for the authenticated user
         user = request.user
         friends = FriendStatus.objects.filter(
             (Q(sender=user) | Q(receiver=user)) & Q(status='Friends')

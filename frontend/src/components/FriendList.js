@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-// import Chat from './Chat';
-
 export default function FriendList() {
   const [friends, setFriends] = useState([]);
   const [loggedInUserName, setLoggedInUserName] = useState('');
