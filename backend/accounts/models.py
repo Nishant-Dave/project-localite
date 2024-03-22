@@ -166,14 +166,15 @@ class FriendStatus(models.Model):
 
 
 class Message(models.Model):
-    sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='sent_messages')
-    recipient = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='received_messages')
+    sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='sent_messages', db_column='sender')
+    recipient = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='received_messages', db_column='recipient')
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'chat_table'
+        managed = False
 
 
 # class Room(models.Model):

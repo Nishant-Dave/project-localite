@@ -3,9 +3,10 @@ import Post from "./Post"
 import LogoutButton from "./Logout"
 import FriendList from "./FriendList"
 import FriendRequests from "./FriendRequest"
+import Chat from "./Chat"
 
 
-export default function Home( {userName} ) {
+export default function Home({ userName }) {
 
 
 
@@ -25,7 +26,7 @@ export default function Home( {userName} ) {
                         <li className="nav-item"><a href="chat" className="nav-link">Chat</a></li>
                         <li className="nav-item"><a href="/" className="nav-link">Pricing</a></li>
                         <li className="nav-item"><a href="/" className="nav-link">FAQs</a></li>
-                        
+
 
                         <a href="/" className="nav-link" ><LogoutButton /></a>
                     </ul>
@@ -55,11 +56,12 @@ export default function Home( {userName} ) {
                                     <a href="/" className="nav-link link-dark" >
                                         <FriendRequests />
                                         <FriendList />
+
                                         <svg className="bi me-2" width="16" height="16"><use xlinkHref="#speedometer2" /></svg>
-                                    
+
                                     </a>
                                 </li>
-                                
+
                             </ul>
                             <hr />
                             <div className="dropdown">
@@ -79,19 +81,24 @@ export default function Home( {userName} ) {
                     </div>
 
 
-{/* -------------------------------- MAIN CONTENT -------------------------------- */}
+                    {/* -------------------------------- MAIN CONTENT -------------------------------- */}
 
 
-                    <div className="col-9" style={{ paddingTop: "50px" }}>
+                    <div className="col-6" style={{ paddingTop: "50px" }}>
                         <div>
                             <Post />
-                         
+
 
                         </div>
                     </div>
+                    <div className="col-3 bg-light">
+                        <h3 className="text-primary">Chat box</h3>
+                        <Chat />
+
+                    </div>
+
                 </div>
             </div>
-
 
 
         </div>
